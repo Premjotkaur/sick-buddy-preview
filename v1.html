@@ -1574,7 +1574,7 @@ window.DATA = {
       pharmacy: 'CareKart Pharmacy, Koramangala',
       lab: 'HealWell Diagnostics, Indiranagar',
       doctors: ['Dr. Kavya Rao (MBBS, GP)', 'Dr. Arjun Shetty (MBBS, GP)'],
-      nurses: ['Nurse Deepa M.', 'Nurse Ravi K.', 'Care assistant Shilpa'],
+      nurses: ['Nurse Deepa M.', 'Nurse Ravi K.', 'Nurse Shilpa.'],
       special: { id: 'fs', emoji: '🥣', name: 'Ragi malt (warm)', desc: 'Light, filling finger-millet drink', price: 60, k: 0 },
     },
     pune: {
@@ -1588,7 +1588,7 @@ window.DATA = {
       pharmacy: 'CareKart Pharmacy, Kothrud',
       lab: 'HealWell Diagnostics, Deccan',
       doctors: ['Dr. Sneha Kulkarni (MBBS, GP)', 'Dr. Rohan Deshpande (MBBS, GP)'],
-      nurses: ['Nurse Pooja S.', 'Nurse Amit J.', 'Care assistant Sunita'],
+      nurses: ['Nurse Pooja S.', 'Nurse Amit J.', 'Nurse Sunita.'],
       special: { id: 'fs', emoji: '🍛', name: 'Varan bhaat with ghee', desc: 'Simple Maharashtrian dal rice', price: 90, k: 0 },
     },
     mumbai: {
@@ -1602,7 +1602,7 @@ window.DATA = {
       pharmacy: 'CareKart Pharmacy, Andheri West',
       lab: 'HealWell Diagnostics, Juhu',
       doctors: ['Dr. Neha Shah (MBBS, GP)', 'Dr. Imran Shaikh (MBBS, GP)'],
-      nurses: ['Nurse Maria D.', 'Nurse Sachin P.', 'Care assistant Rekha'],
+      nurses: ['Nurse Maria D.', 'Nurse Sachin P.', 'Nurse Rekha.'],
       special: { id: 'fs', emoji: '🥘', name: 'Sabudana khichdi (mild)', desc: 'Soft, light & easy to digest', price: 80, k: 2 },
     },
     hyderabad: {
@@ -1616,7 +1616,7 @@ window.DATA = {
       pharmacy: 'CareKart Pharmacy, Gachibowli',
       lab: 'HealWell Diagnostics, Madhapur',
       doctors: ['Dr. Sravani Reddy (MBBS, GP)', 'Dr. Faisal Ali (MBBS, GP)'],
-      nurses: ['Nurse Lavanya T.', 'Nurse Joseph V.', 'Care assistant Swathi'],
+      nurses: ['Nurse Lavanya T.', 'Nurse Joseph V.', 'Nurse Swathi.'],
       special: { id: 'fs', emoji: '🍛', name: 'Tomato pappu & rice', desc: 'Mild Andhra-style dal rice', price: 90, k: 0 },
     },
     delhi: {
@@ -1630,7 +1630,7 @@ window.DATA = {
       pharmacy: 'CareKart Pharmacy, Kamla Nagar',
       lab: 'HealWell Diagnostics, Model Town',
       doctors: ['Dr. Ananya Mehta (MBBS, GP)', 'Dr. Vikram Malhotra (MBBS, GP)'],
-      nurses: ['Nurse Simran K.', 'Nurse Rahul B.', 'Care assistant Geeta'],
+      nurses: ['Nurse Simran K.', 'Nurse Rahul B.', 'Nurse Geeta.'],
       special: { id: 'fs', emoji: '🫓', name: 'Moong dal cheela (2)', desc: 'Soft lentil pancakes, no spice', price: 80, k: 2 },
     },
   },
@@ -1640,7 +1640,7 @@ window.DATA = {
     { id: 'food',      label: 'Food',              sub: 'Home-cooked',     icon: 'food',      go: '#/shop/food',    tone: 'peach' },
     { id: 'meds',      label: 'Meds',              sub: 'Pharmacy',        icon: 'meds',      go: '#/shop/meds',    tone: 'blue' },
     { id: 'doctor',    label: 'Doctor Home',       sub: 'Visit or video',  icon: 'doctor',    go: '#/book/doctor',  tone: 'sage' },
-    { id: 'nurse',     label: 'Nurse + Assistance',sub: 'Per day care',    icon: 'nurse',     go: '#/nurse',        tone: 'lilac' },
+    { id: 'nurse',     label: 'Nurse',sub: 'Per day care',    icon: 'nurse',     go: '#/nurse',        tone: 'lilac' },
     { id: 'emergency', label: 'Emergency 24/7',    sub: 'SOS · 112',       icon: 'emergency', go: '#/sos',          tone: 'red' },
     { id: 'tests',     label: 'Tests & Reports',   sub: 'Lab at home',     icon: 'tests',     go: '#/tests',        tone: 'sky' },
     { id: 'hygiene',   label: 'Hygiene Goods',     sub: 'Essentials',      icon: 'hygiene',   go: '#/shop/hygiene', tone: 'sand' },
@@ -1717,11 +1717,10 @@ window.DATA = {
   },
 
   nurse: {
-    title: 'Nurse + Assistance', icon: 'nurse',
+    title: 'Nurse', icon: 'nurse',
     levels: [
-      { id: 'assist', label: 'Care assistant', price: 600, desc: 'Meals, hydration, hygiene help, company' },
-      { id: 'nurse',  label: 'Home nurse',     price: 700, desc: 'Vitals, giving meds on time, dressing' },
-      { id: 'senior', label: 'Senior nurse',   price: 800, desc: 'Injections / IV drip (with prescription), post-hospital care' },
+      { id: 'senior', label: 'Senior nurse', price: 800, desc: 'Injections, IV, post-hospital' },
+      { id: 'care',   label: 'Care nurse',   price: 700, desc: 'Care + home nursing' },
     ],
     shift: 'Day shift · 9 AM – 7 PM',
     needs: ['Check vitals', 'Help taking meds', 'Meals & hydration', 'Wound dressing', 'Light cleaning', 'Company & check on me', 'Injection / IV*'],
@@ -2231,7 +2230,7 @@ window.DATA = {
   function searchIndex() {
     const out = [];
     const kw = { food: 'meal khichdi soup dal rice tiffin eat hungry', meds: 'medicine pharmacy fever paracetamol dolo crocin cough cold ors', doctor: 'gp visit video consult ' + DATA.doctor.needs.join(' '),
-      nurse: 'care assistant attendant ' + DATA.nurse.needs.join(' '), emergency: 'sos ambulance 112 108 help urgent', tests: 'lab blood report dengue malaria typhoid cbc', hygiene: 'tissue mask sanitiser wipes pads soap', cleaning: 'maid cleaner clean house room sweep mop dishes bai housekeeping' };
+      nurse: 'care nurse senior nurse home nursing ' + DATA.nurse.needs.join(' '), emergency: 'sos ambulance 112 108 help urgent', tests: 'lab blood report dengue malaria typhoid cbc', hygiene: 'tissue mask sanitiser wipes pads soap', cleaning: 'maid cleaner clean house room sweep mop dishes bai housekeeping' };
     DATA.services.forEach((sv) => out.push({ t: sv.label, s: sv.sub, go: sv.go, ic: I[sv.icon], k: (kw[sv.id] || ''), sos: sv.id === 'emergency', w: 3 }));
     Object.keys(DATA.shops).forEach((sid) => shopItems(sid).forEach((it) => out.push({ t: it.name, s: `${DATA.shops[sid].title} · ${money(it.price)}`, go: '#/shop/' + sid, emo: it.emoji, k: it.desc || '', w: 1 })));
     DATA.labTests.forEach((lt) => out.push({ t: lt.name, s: `Lab test · ${money(lt.price)}`, go: '#/tests', ic: I.tests, k: lt.desc, w: 1 }));
@@ -3313,20 +3312,22 @@ window.DATA = {
     <p class="footnote">Demo booking – no real ${isTest ? 'lab' : 'doctor'} is contacted. Example names only.</p>`;
   };
 
-  /* ---------- NURSE + ASSISTANCE (per day or multi-day package) ---------- */
+  /* ---------- NURSE (per day or multi-day package) ---------- */
   let nurseDraft = null;
+  /* Two options only; older saved bookings map to Care nurse */
+  function nurseLvl(id) { const L = DATA.nurse.levels; return L.find((l) => l.id === id) || L.find((l) => l.id === 'care'); }
   function freshNurseDraft() {
     const days = dayOptions(7);
-    return { tab: 'days', level: 'nurse', days: [days[1].key], needs: [], notes: '', pkgDays: 7, pkgStart: days[1].key };
+    return { tab: 'days', level: 'care', days: [days[1].key], needs: [], notes: '', pkgDays: 7, pkgStart: days[1].key };
   }
   views.nurse = () => {
     if (!nurseDraft) nurseDraft = freshNurseDraft();
     const d = nurseDraft;
     const cfg = DATA.nurse;
     const c = city();
-    const level = cfg.levels.find((l) => l.id === d.level);
+    const level = nurseLvl(d.level);
     const total = level.price * d.days.length;
-    setTopbar({ title: 'Nurse + Assistance', back: true });
+    setTopbar({ title: 'Nurse', back: true });
     return `
     <div class="tabs" role="tablist">
       <button class="tab ${d.tab === 'days' ? 'on' : ''}" role="tab" data-action="nurse-tab" data-v="days" data-testid="nurse-tab-days">Pick days</button>
@@ -3512,7 +3513,7 @@ window.DATA = {
     const all = S().chats[id] || [];
     const msgs = all.filter((m) => m.t <= Date.now());
     const pending = all.length - msgs.length;
-    const level = DATA.nurse.levels.find((l) => l.id === b.level);
+    const level = nurseLvl(b.level);
     const lastOffer = [...msgs].reverse().find((m) => m.offer);
     return `
     <div class="banner-demo">${I.info} DEMO CHAT – simulated nurse replies, nothing is sent</div>
@@ -3542,7 +3543,7 @@ window.DATA = {
     if (b.type === 'nursePackage') { location.replace('#/chat/' + id); return ''; }
     setTopbar({ title: 'Booking confirmed', back: true });
     const isVideo = b.type === 'doctor' && b.mode === 'video';
-    const title = b.type === 'doctor' ? `Doctor · ${isVideo ? 'Video consult' : 'Home visit'}` : b.type === 'nurse' ? `Nurse · ${DATA.nurse.levels.find((l) => l.id === b.level).label}` : b.type === 'cleaning' ? 'Cleaning assistance' : 'Home lab test';
+    const title = b.type === 'doctor' ? `Doctor · ${isVideo ? 'Video consult' : 'Home visit'}` : b.type === 'nurse' ? `Nurse · ${nurseLvl(b.level).label}` : b.type === 'cleaning' ? 'Cleaning assistance' : 'Home lab test';
     const when = b.type === 'nurse' ? b.days.map((k) => fmtDay(k)).join(', ') + ' · 9 AM – 7 PM' : b.type === 'cleaning' ? `${fmtDay(b.day, true)}, ${fmtSlot(b.slot)}` : `${fmtDay(b.day, true)}, ${fmtSlot(b.slot)}`;
     return `
     <section class="confirm-hero">
@@ -3632,7 +3633,7 @@ window.DATA = {
     const s = S();
     const bookingRow = (b) => {
       if (b.type === 'nursePackage') {
-        const lvl = DATA.nurse.levels.find((l) => l.id === b.level);
+        const lvl = nurseLvl(b.level);
         return `<a class="card item" href="#/chat/${b.id}"><div class="item-thumb sm">${I.box}</div><div class="grow"><div class="strong">Nurse package · ${plural(b.pkgDays, 'day')}</div><div class="small muted">${esc(lvl.label)} · from ${esc(fmtDay(b.day))}</div></div><span class="status-pill ${b.status === 'agreed' ? 'ok' : ''}">${b.status === 'agreed' ? 'Agreed ' + money(b.agreedPrice) : 'Price to discuss'}</span></a>`;
       }
       const label = b.type === 'doctor' ? `Doctor · ${b.mode === 'video' ? 'Video consult' : 'Home visit'}` : b.type === 'nurse' ? `Nurse · ${plural(b.days.length, 'day')}` : b.type === 'cleaning' ? `Cleaning · ${plural(b.needs.length, 'task')}` : 'Lab test';
@@ -4022,12 +4023,12 @@ window.DATA = {
         saveNotes();
         const d = nurseDraft;
         if (!d.days.length || !d.needs.length) return;
-        const lvl = DATA.nurse.levels.find((l) => l.id === d.level);
+        const lvl = nurseLvl(d.level);
         const id = Store.uid('b');
         Store.update((st) => {
           st.bookings.unshift({
             id, type: 'nurse', level: d.level, days: d.days.slice(), needs: d.needs.slice(), notes: d.notes,
-            staff: pickOne(city().nurses.filter((n) => (d.level === 'assist' ? /assistant/i.test(n) : /^Nurse/.test(n)))),
+            staff: pickOne(city().nurses.filter((n) => /^Nurse/.test(n))),
             base: lvl.price * d.days.length, fee: 0, price: lvl.price * d.days.length,
             address: st.profile.address, city: st.profile.city, createdAt: Date.now(),
           });
@@ -4040,8 +4041,8 @@ window.DATA = {
         saveNotes();
         const d = nurseDraft;
         if (!d.needs.length) return;
-        const lvl = DATA.nurse.levels.find((l) => l.id === d.level);
-        const staff = pickOne(city().nurses.filter((n) => (d.level === 'assist' ? /assistant/i.test(n) : /^Nurse/.test(n))));
+        const lvl = nurseLvl(d.level);
+        const staff = pickOne(city().nurses.filter((n) => /^Nurse/.test(n)));
         const id = Store.uid('b');
         const now = Date.now();
         const offer = Math.round((lvl.price * d.pkgDays * 0.9) / 100) * 100; // example opening offer from the nurse
@@ -4117,7 +4118,7 @@ window.DATA = {
     const m = text.replace(/,/g, '').match(/(\d{3,6})/);
     if (b && b.status !== 'agreed' && m) {
       const ask = Number(m[1]);
-      const lvl = DATA.nurse.levels.find((l) => l.id === b.level);
+      const lvl = nurseLvl(b.level);
       const floor = Math.round((lvl.price * b.pkgDays * 0.75) / 100) * 100;
       const counter = Math.max(ask, floor);
       pushNurseReply(id, counter === ask ? `Okay, ${money(ask)} for ${b.pkgDays} days works for me.` : `${money(ask)} is a bit low for me. Can we meet at ${money(counter)}?`, counter);
