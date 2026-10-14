@@ -1049,13 +1049,6 @@ html.senior .sx-title { font-size: 1.85rem; }
 .cl-days::-webkit-scrollbar { display: none; }
 .cl-days .day { min-width: 70px; flex: none; }
 .cl-slots { grid-template-columns: repeat(3, 1fr); }
-.cl-dur { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
-.cl-dur button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 4px; border-radius: 16px; background: var(--primary-tint); border: 1.5px solid #dfeae7; }
-.cl-dur button b { font-size: 1.15rem; font-weight: 900; }
-.cl-dur button span { font-size: .8rem; font-weight: 800; color: var(--primary-dark); }
-.cl-dur button small { font-size: .66rem; color: var(--muted); font-weight: 700; text-align: center; line-height: 1.2; }
-.cl-dur button.on { background: var(--primary); border-color: var(--primary); color: #fff; }
-.cl-dur button.on span, .cl-dur button.on small { color: #fff; }
 .cl-addr { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 14px; background: var(--bg); border: 1px solid #efeae1; font-size: .86rem; font-weight: 700; margin: 6px 0 10px; }
 .cl-addr svg { width: 18px; height: 18px; color: var(--primary-dark); flex: none; margin-top: 1px; }
 .cl-addr a { margin-left: auto; flex: none; }
@@ -1171,8 +1164,8 @@ html.dark .btn-primary:disabled { background: #2d3938; color: #6f7c7a; }
 html.dark .btn-primary { box-shadow: 0 6px 16px rgba(0,0,0,.3); }
 html.dark .btn-outline-danger { background: transparent; color: #f08a7e; border-color: #7a3630; }
 html.dark .btn-outline-amber { background: transparent; color: var(--amber-ink); }
-html.dark .chip, html.dark .meal-slot, html.dark .day, html.dark .slot, html.dark .cl-dur button { border-color: var(--line); }
-html.dark .chip.on, html.dark .meal-slot.on, html.dark .day.on, html.dark .slot.on, html.dark .cl-dur button.on { border-color: var(--primary); }
+html.dark .chip, html.dark .meal-slot, html.dark .day, html.dark .slot { border-color: var(--line); }
+html.dark .chip.on, html.dark .meal-slot.on, html.dark .day.on, html.dark .slot.on { border-color: var(--primary); }
 html.dark .radio-dot { border-color: #4a5857; }
 html.dark .demo-card { background: #221f17; border-color: #5a4823; }
 html.dark .note, html.dark .shop-head, html.dark .sx-soft, html.dark .sx-progress span { border-color: #2b4440; }
@@ -1730,18 +1723,9 @@ window.DATA = {
 
   /* Cleaning assistance – part-time maid, PRE-BOOK ONLY (earliest = tomorrow, no on-demand) */
   cleaning: {
-    /* Economical for both sides: the helper keeps 100% of the hourly rate
-       (paid to her directly after the visit); the customer pays only a
-       tiny flat booking fee on top – no commission cut from the maid. */
-    rate: 130,          // ₹ per hour → 100% to the helper
     fee: 9,             // ₹ flat booking fee per visit (customer)
-    durations: [
-      { h: 2, desc: '1 RK / studio room' },
-      { h: 3, desc: '1 BHK or shared flat' },
-      { h: 4, desc: '2 BHK / deep clean' },
-    ],
     slots: ['08:00', '09:30', '11:00', '14:00', '16:00', '17:30'],
-    tasks: ['Sweep & mop', 'Dishes', 'Bathroom', 'Dusting', 'Kitchen wipe-down', 'Change bedsheets', 'Fold laundry', 'Take out trash'],
+    tasks: [{ n: 'Sweep & mop', p: 99 }, { n: 'Dishes', p: 99 }, { n: 'Bathroom', p: 100 }, { n: 'Kitchen', p: 100 }, { n: 'Dusting', p: 99 }, { n: 'Laundry', p: 100 }],
     helpers: ['Lakshmi R.', 'Geeta S.', 'Meena K.', 'Anita P.'],
     daysAhead: 7,
   },
@@ -3402,13 +3386,12 @@ window.DATA = {
     }
     return out;
   }
-  const cleanPrice = (h) => { const c = DATA.cleaning; const pay = c.rate * h; return { pay, fee: c.fee, total: pay + c.fee }; };
-  const endSlot = (hhmm, h) => { const [hh, mm] = hhmm.split(':').map(Number); const d = new Date(); d.setHours(hh + h, mm); return fmtTime(d); };
+  const cleanPrice = (tasks) => { const c = DATA.cleaning; const pay = c.tasks.filter((t) => tasks.includes(t.n)).reduce((x, t) => x + t.p, 0); return { pay, fee: c.fee, total: pay + c.fee }; };
   views.cleaning = () => {
-    if (!cleanDraft) cleanDraft = { day: cleanDays()[0].key, slot: null, hours: 3, tasks: ['Sweep & mop', 'Dishes'], notes: '' };
+    if (!cleanDraft) cleanDraft = { day: cleanDays()[0].key, slot: null, tasks: ['Sweep & mop', 'Dishes'], notes: '' };
     const d = cleanDraft;
     const cfg = DATA.cleaning;
-    const pr = cleanPrice(d.hours);
+    const pr = cleanPrice(d.tasks);
     const ready = d.slot && d.tasks.length;
     setTopbar({ title: 'Cleaning assistance', back: true });
     return `
@@ -3417,7 +3400,7 @@ window.DATA = {
       <p class="sx-eyebrow">${I.calendar} Pre-book only</p>
       <h1 class="sx-title" id="clT">A tidy home, <em>while you rest</em></h1>
       <p class="sx-sub">Book a part-time maid for a set slot – from tomorrow onwards. No on-demand visits.</p>
-      <div class="cl-pills"><span>${I.check} Verified helpers</span><span>${I.clock} 2–4 h visits</span><span>${I.check} Pay after</span></div>
+      <div class="cl-pills"><span>${I.check} Verified helpers</span><span>${I.check} Pay after</span></div>
     </section>
 
     <section class="card sx-card cl-card">
@@ -3432,12 +3415,8 @@ window.DATA = {
     </section>
 
     <section class="card sx-card cl-card">
-      <h2 class="sx-h"><span class="cl-step">3</span> How long?</h2>
-      <div class="cl-dur" role="radiogroup" aria-label="Duration">
-        ${cfg.durations.map((x) => `<button class="${d.hours === x.h ? 'on' : ''}" role="radio" aria-checked="${d.hours === x.h}" data-action="clean-hours" data-v="${x.h}" data-testid="clean-hours-${x.h}"><b>${x.h} h</b><span>${money(cleanPrice(x.h).total)}</span><small>${esc(x.desc)}</small></button>`).join('')}
-      </div>
-      <div class="small muted mt">What should they focus on?</div>
-      ${chipsFor(cfg.tasks, d.tasks, 'clean-task')}
+      <h2 class="sx-h"><span class="cl-step">3</span> Tasks</h2>
+      <div class="chips cl-tasks">${cfg.tasks.map((t) => `<button class="chip ${d.tasks.includes(t.n) ? 'on' : ''}" aria-pressed="${d.tasks.includes(t.n)}" data-action="clean-task" data-v="${esc(t.n)}">${esc(t.n)} · ${money(t.p)}</button>`).join('')}</div>
     </section>
 
     <section class="card sx-card cl-card">
@@ -3449,11 +3428,10 @@ window.DATA = {
     </section>
 
     <section class="card sx-card cl-summary" data-testid="clean-bill">
-      <div class="sum-row"><span>When</span><span>${esc(fmtDay(d.day))}${d.slot ? `, ${fmtSlot(d.slot)} – ${endSlot(d.slot, d.hours)}` : ' · pick a time'}</span></div>
-      <div class="sum-row"><span>Cleaning · ${d.hours} h × ${money(cfg.rate)}/h</span><span>${money(pr.pay)}</span></div>
+      <div class="sum-row"><span>When</span><span>${esc(fmtDay(d.day))}${d.slot ? `, ${fmtSlot(d.slot)}` : ' · pick a time'}</span></div>
+      <div class="sum-row"><span>Tasks · ${d.tasks.length}</span><span>${money(pr.pay)}</span></div>
       <div class="sum-row"><span>Booking fee</span><span>${money(pr.fee)}</span></div>
       <div class="sum-row total"><span>You pay · after the visit</span><span data-testid="clean-total">${money(pr.total)}</span></div>
-      <div class="cl-payout" data-testid="clean-payout">${I.check}<span><strong>Helper earns ${money(pr.pay)}</strong> – 100% of the hourly rate, paid to her directly. No commission.</span></div>
     </section>
     <button class="btn btn-primary btn-block btn-lg" data-action="clean-review" data-testid="clean-review" ${ready ? '' : 'disabled'}>
       ${!d.slot ? 'Pick a start time' : !d.tasks.length ? 'Pick at least one task' : `Review &amp; pre-book · ${money(pr.total)}`}
@@ -3462,7 +3440,7 @@ window.DATA = {
   };
   function cleanConfirmModal() {
     const d = cleanDraft;
-    const pr = cleanPrice(d.hours);
+    const pr = cleanPrice(d.tasks);
     openModal(`
       <div class="sx-sheet cl-sheet">
         <div class="sx-sheet-grab" aria-hidden="true"></div>
@@ -3470,13 +3448,11 @@ window.DATA = {
         <h3>Confirm pre-booking?</h3>
         <p class="muted">A helper near ${esc(city().area)} will be assigned <em>(demo)</em>. You can cancel any time before the visit.</p>
         <ul class="sx-sheet-list">
-          <li>${I.calendar}<span class="grow">When</span><b>${esc(fmtDay(d.day, true))}, ${fmtSlot(d.slot)} – ${endSlot(d.slot, d.hours)}</b></li>
+          <li>${I.calendar}<span class="grow">When</span><b>${esc(fmtDay(d.day, true))}, ${fmtSlot(d.slot)}</b></li>
           <li>${I.clean}<span class="grow">Tasks</span><b>${esc(d.tasks.join(', '))}</b></li>
           <li>${I.pin}<span class="grow">Where</span><b>${esc(S().profile.address)}</b></li>
-          <li>${I.clean}<span class="grow">Cleaning</span><b>${d.hours} h × ${money(DATA.cleaning.rate)} = ${money(pr.pay)}</b></li>
           <li>${I.info}<span class="grow">Booking fee</span><b>${money(pr.fee)}</b></li>
           <li class="cl-total">${I.check}<span class="grow">You pay</span><b>${money(pr.total)} · after visit</b></li>
-          <li class="cl-earn">${I.user}<span class="grow">Helper earns</span><b>${money(pr.pay)} · 100%</b></li>
         </ul>
         <div class="modal-actions">
           <button class="btn btn-ghost" data-action="modal-close">Edit</button>
@@ -3484,12 +3460,12 @@ window.DATA = {
         </div>
       </div>`, () => {
       const dd = cleanDraft;
-      const pr2 = cleanPrice(dd.hours);
+      const pr2 = cleanPrice(dd.tasks);
       const id = Store.uid('b');
       Store.update((st) => {
         st.bookings.unshift({
-          id, type: 'cleaning', hours: dd.hours, day: dd.day, slot: dd.slot, needs: dd.tasks.slice(), notes: dd.notes,
-          staff: pickOne(DATA.cleaning.helpers), base: pr2.pay, fee: pr2.fee, price: pr2.total, payout: pr2.pay,
+          id, type: 'cleaning', day: dd.day, slot: dd.slot, needs: dd.tasks.slice(), notes: dd.notes,
+          staff: pickOne(DATA.cleaning.helpers), base: pr2.pay, fee: pr2.fee, price: pr2.total,
           address: st.profile.address, city: st.profile.city, createdAt: Date.now(),
         });
       });
@@ -3537,8 +3513,8 @@ window.DATA = {
     if (b.type === 'nursePackage') { location.replace('#/chat/' + id); return ''; }
     setTopbar({ title: 'Booking confirmed', back: true });
     const isVideo = b.type === 'doctor' && b.mode === 'video';
-    const title = b.type === 'doctor' ? `Doctor · ${isVideo ? 'Video consult' : 'Home visit'}` : b.type === 'nurse' ? `Nurse · ${DATA.nurse.levels.find((l) => l.id === b.level).label}` : b.type === 'cleaning' ? `Cleaning assistance · ${b.hours} h` : 'Home lab test';
-    const when = b.type === 'nurse' ? b.days.map((k) => fmtDay(k)).join(', ') + ' · 9 AM – 7 PM' : b.type === 'cleaning' ? `${fmtDay(b.day, true)}, ${fmtSlot(b.slot)} – ${endSlot(b.slot, b.hours)}` : `${fmtDay(b.day, true)}, ${fmtSlot(b.slot)}`;
+    const title = b.type === 'doctor' ? `Doctor · ${isVideo ? 'Video consult' : 'Home visit'}` : b.type === 'nurse' ? `Nurse · ${DATA.nurse.levels.find((l) => l.id === b.level).label}` : b.type === 'cleaning' ? 'Cleaning assistance' : 'Home lab test';
+    const when = b.type === 'nurse' ? b.days.map((k) => fmtDay(k)).join(', ') + ' · 9 AM – 7 PM' : b.type === 'cleaning' ? `${fmtDay(b.day, true)}, ${fmtSlot(b.slot)}` : `${fmtDay(b.day, true)}, ${fmtSlot(b.slot)}`;
     return `
     <section class="confirm-hero">
       <div class="big-check">${I.check}</div>
@@ -3552,7 +3528,6 @@ window.DATA = {
       <div class="ticket-row"><span class="muted">Where</span><span class="strong">${isVideo ? 'Video call in the app' : esc(b.address)}</span></div>
       ${b.notes ? `<div class="ticket-row"><span class="muted">Notes</span><span>${esc(b.notes)}</span></div>` : ''}
       ${b.fee ? `<div class="ticket-row"><span class="muted">Price</span><span>${money(b.base)} + ${money(b.fee)} booking fee</span></div>` : ''}
-      ${b.type === 'cleaning' ? `<div class="ticket-row"><span class="muted">Helper earns</span><span class="strong">${money(b.payout)} (100%, paid directly)</span></div>` : ''}
       ${b.type === 'nurse' ? `<div class="ticket-row"><span class="muted">Rate</span><span>${money(b.base / b.days.length)} × ${plural(b.days.length, 'day')}</span></div>` : ''}
       <div class="ticket-row"><span class="muted">Total</span><span class="strong">${money(b.price)} · pay after</span></div>
       <div class="ticket-code">Booking #${esc(b.id.slice(-6).toUpperCase())}</div>
@@ -3631,7 +3606,7 @@ window.DATA = {
         const lvl = DATA.nurse.levels.find((l) => l.id === b.level);
         return `<a class="card item" href="#/chat/${b.id}"><div class="item-thumb sm">${I.box}</div><div class="grow"><div class="strong">Nurse package · ${plural(b.pkgDays, 'day')}</div><div class="small muted">${esc(lvl.label)} · from ${esc(fmtDay(b.day))}</div></div><span class="status-pill ${b.status === 'agreed' ? 'ok' : ''}">${b.status === 'agreed' ? 'Agreed ' + money(b.agreedPrice) : 'Price to discuss'}</span></a>`;
       }
-      const label = b.type === 'doctor' ? `Doctor · ${b.mode === 'video' ? 'Video consult' : 'Home visit'}` : b.type === 'nurse' ? `Nurse · ${plural(b.days.length, 'day')}` : b.type === 'cleaning' ? `Cleaning · ${b.hours} h` : 'Lab test';
+      const label = b.type === 'doctor' ? `Doctor · ${b.mode === 'video' ? 'Video consult' : 'Home visit'}` : b.type === 'nurse' ? `Nurse · ${plural(b.days.length, 'day')}` : b.type === 'cleaning' ? `Cleaning · ${plural(b.needs.length, 'task')}` : 'Lab test';
       const when = b.type === 'nurse' ? b.days.map((k) => fmtDay(k)).join(', ') : `${fmtDay(b.day)}, ${fmtSlot(b.slot)}`;
       const icon = b.type === 'doctor' ? (b.mode === 'video' ? I.video : I.doctor) : b.type === 'nurse' ? I.nurse : b.type === 'cleaning' ? I.clean : I.tests;
       return `<a class="card item" href="#/booking/${b.id}"><div class="item-thumb sm">${icon}</div><div class="grow"><div class="strong">${label}</div><div class="small muted">${esc(when)} · ${money(b.price)}</div></div><span class="status-pill">Booked</span></a>`;
@@ -4004,7 +3979,6 @@ window.DATA = {
       /* cleaning (pre-book only) */
       case 'clean-day': saveNotes(); cleanDraft.day = el.dataset.v; rerender(); break;
       case 'clean-slot': saveNotes(); cleanDraft.slot = el.dataset.v; rerender(); break;
-      case 'clean-hours': saveNotes(); cleanDraft.hours = Number(el.dataset.v); rerender(); break;
       case 'clean-task': saveNotes(); cleanDraft.tasks = toggleIn(cleanDraft.tasks, el.dataset.v); rerender(); break;
       case 'clean-review': saveNotes(); if (cleanDraft && cleanDraft.slot && cleanDraft.tasks.length) cleanConfirmModal(); break;
 
